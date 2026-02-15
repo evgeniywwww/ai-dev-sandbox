@@ -11,3 +11,19 @@ module "network" {
   resource_group_name = var.resource_group_name
   tags                = local.common_tags
 }
+
+module "security_public" {
+  source = "../../modules/security"
+
+  nsg_id               = module.network.public_nsg_id
+  resource_group_name  = var.resource_group_name
+  security_rules       = var.security_rules_public
+}
+
+module "security_private" {
+  source = "../../modules/security"
+
+  nsg_id               = module.network.private_nsg_id
+  resource_group_name  = var.resource_group_name
+  security_rules       = var.security_rules_private
+}

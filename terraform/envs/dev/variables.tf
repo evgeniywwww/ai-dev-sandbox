@@ -48,6 +48,36 @@ variable "aks_subnet_cidr" {
   }
 }
 
+variable "security_rules_public" {
+  type = list(object({
+    name                       = string
+    priority                   = number
+    direction                  = string
+    access                     = string
+    protocol                   = string
+    source_port_range          = string
+    destination_port_range     = string
+    source_address_prefix      = string
+    destination_address_prefix = string
+  }))
+  description = "Security rules applied to the public subnet NSG. Defined in tfvars per environment."
+}
+
+variable "security_rules_private" {
+  type = list(object({
+    name                       = string
+    priority                   = number
+    direction                  = string
+    access                     = string
+    protocol                   = string
+    source_port_range          = string
+    destination_port_range     = string
+    source_address_prefix      = string
+    destination_address_prefix = string
+  }))
+  description = "Security rules applied to the private (AKS) subnet NSG. Defined in tfvars per environment."
+}
+
 variable "aks_kubernetes_version" {
   type        = string
   description = "Kubernetes version to use for the future AKS cluster in this dev environment (for example, 1.29.0)."

@@ -87,7 +87,6 @@ resource "azurerm_route_table" "public" {
   name                          = "${var.vnet_name}-public-rt"
   location                      = var.location
   resource_group_name           = var.resource_group_name
-  disable_bgp_route_propagation = false
   tags                          = var.tags
 }
 
@@ -95,7 +94,6 @@ resource "azurerm_route_table" "private" {
   name                          = "${var.vnet_name}-private-rt"
   location                      = var.location
   resource_group_name           = var.resource_group_name
-  disable_bgp_route_propagation = false
   tags                          = var.tags
 }
 
