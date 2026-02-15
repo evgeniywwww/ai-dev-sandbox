@@ -47,6 +47,8 @@ vnet_address_space = ["10.20.0.0/16"]
 public_subnet_cidr = "10.20.0.0/24"
 aks_subnet_cidr    = "10.20.1.0/24"
 
+enable_nat_gateway = false
+
 #############################
 # Security (NSG rules)
 #############################

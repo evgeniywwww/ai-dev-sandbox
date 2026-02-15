@@ -43,6 +43,7 @@ module "network" {
   aks_subnet_cidr     = var.aks_subnet_cidr
   location            = var.location
   resource_group_name = var.resource_group_name
+  enable_nat_gateway  = var.enable_nat_gateway
   tags                = local.common_tags
 }
 

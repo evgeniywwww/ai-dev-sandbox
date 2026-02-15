@@ -84,6 +84,11 @@ variable "aks_subnet_cidr" {
   }
 }
 
+variable "enable_nat_gateway" {
+  type        = bool
+  description = "Whether to create a NAT Gateway for private subnet outbound connectivity. Required for production AKS; optional for dev/test."
+}
+
 #########################################################
 # Security Policy (NSG Rules)
 #########################################################

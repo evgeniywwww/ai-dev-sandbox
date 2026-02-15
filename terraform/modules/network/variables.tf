@@ -66,3 +66,8 @@ variable "tags" {
   type        = map(string)
   description = "Tags to apply to all network resources."
 }
+
+variable "enable_nat_gateway" {
+  type        = bool
+  description = "Whether to create a NAT Gateway for private subnet outbound connectivity. Required for AKS without direct internet access."
+}

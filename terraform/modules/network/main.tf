@@ -73,6 +73,8 @@ resource "azurerm_subnet" "aks" {
 #########################################################
 
 resource "azurerm_public_ip" "nat" {
+  count = var.enable_nat_gateway ? 1 : 0
+
   name                = "${var.vnet_name}-nat-pip"
   location            = var.location
   resource_group_name = var.resource_group_name
@@ -82,6 +84,8 @@ resource "azurerm_public_ip" "nat" {
 }
 
 resource "azurerm_nat_gateway" "this" {
+  count = var.enable_nat_gateway ? 1 : 0
+
   name                = "${var.vnet_name}-nat"
   location            = var.location
   resource_group_name = var.resource_group_name
@@ -90,13 +94,17 @@ resource "azurerm_nat_gateway" "this" {
 }
 
 resource "azurerm_nat_gateway_public_ip_association" "this" {
-  nat_gateway_id       = azurerm_nat_gateway.this.id
-  public_ip_address_id = azurerm_public_ip.nat.id
+  count = var.enable_nat_gateway ? 1 : 0
+
+  nat_gateway_id       = azurerm_nat_gateway.this[0].id
+  public_ip_address_id = azurerm_public_ip.nat[0].id
 }
 
 resource "azurerm_subnet_nat_gateway_association" "aks" {
+  count = var.enable_nat_gateway ? 1 : 0
+
   subnet_id      = azurerm_subnet.aks.id
-  nat_gateway_id = azurerm_nat_gateway.this.id
+  nat_gateway_id = azurerm_nat_gateway.this[0].id
 }
 
 #########################################################
