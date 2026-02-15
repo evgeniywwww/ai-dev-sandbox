@@ -66,3 +66,43 @@ module "security_private" {
   resource_group_name  = var.resource_group_name
   security_rules       = var.security_rules_private
 }
+
+#########################################################
+# AKS Cluster
+#########################################################
+
+module "aks" {
+  source = "../../modules/aks"
+
+  cluster_name        = var.aks_cluster_name
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  dns_prefix          = var.aks_dns_prefix
+
+  kubernetes_version = var.aks_kubernetes_version
+  sku_tier           = var.aks_sku_tier
+
+  private_cluster_enabled = var.aks_private_cluster_enabled
+
+  vnet_subnet_id = module.network.aks_subnet_id
+
+  system_node_vm_size  = var.aks_system_node_vm_size
+  system_node_max_pods = var.aks_system_node_max_pods
+  node_pool_max_surge  = var.aks_node_pool_max_surge
+
+  enable_auto_scaling  = var.enable_auto_scaling
+  initial_node_count   = var.initial_node_count
+  min_node_count       = var.min_node_count
+  max_node_count       = var.max_node_count
+
+  network_plugin = var.aks_network_plugin
+  network_policy = var.aks_network_policy
+  outbound_type  = var.aks_outbound_type
+
+  api_server_authorized_ip_ranges = var.aks_api_server_authorized_ip_ranges
+
+  oidc_issuer_enabled       = var.aks_oidc_issuer_enabled
+  workload_identity_enabled = var.aks_workload_identity_enabled
+
+  tags = local.common_tags
+}

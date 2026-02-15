@@ -127,20 +127,80 @@ variable "security_rules_private" {
 # AKS Configuration (future)
 #########################################################
 
-variable "aks_kubernetes_version" {
+variable "aks_cluster_name" {
   type        = string
-  description = "Kubernetes version to use for the future AKS cluster in this dev environment (for example, 1.29.0)."
+  description = "Name of the AKS cluster for this environment."
 }
 
-variable "aks_admin_group_object_ids" {
-  type        = list(string)
-  description = "List of Azure AD group object IDs that will have admin access to the future AKS cluster."
+variable "aks_dns_prefix" {
+  type        = string
+  description = "DNS prefix for the AKS API server endpoint."
+}
+
+variable "aks_kubernetes_version" {
+  type        = string
+  description = "Kubernetes version to use for the AKS cluster."
+}
+
+variable "aks_sku_tier" {
+  type        = string
+  description = "SKU tier for the AKS cluster (Free for dev, Standard/Premium for prod)."
+}
+
+variable "aks_private_cluster_enabled" {
+  type        = bool
+  description = "Whether to create a private AKS cluster. False enables public API endpoint."
+}
+
+variable "aks_system_node_vm_size" {
+  type        = string
+  description = "VM size for the AKS system node pool (capacity decision)."
+}
+
+variable "aks_system_node_max_pods" {
+  type        = number
+  description = "Maximum pods per node for the AKS system node pool (capacity decision)."
+
+  validation {
+    condition     = var.aks_system_node_max_pods >= 30
+    error_message = "The maximum pods per node should be at least 30 for AKS system nodes."
+  }
+}
+
+variable "aks_node_pool_max_surge" {
+  type        = string
+  description = "Max surge during AKS node pool upgrades (for example, 33% or 1)."
+}
+
+variable "aks_network_plugin" {
+  type        = string
+  description = "Network plugin for AKS (azure or kubenet)."
+}
+
+variable "aks_network_policy" {
+  type        = string
+  description = "Network policy for AKS (azure, calico, cilium)."
+}
+
+variable "aks_outbound_type" {
+  type        = string
+  description = "Outbound routing method for AKS (loadBalancer, userDefinedRouting, managedNATGateway)."
 }
 
 variable "aks_api_server_authorized_ip_ranges" {
   type        = list(string)
-  description = "List of authorized IP ranges for the AKS API server in the dev environment. Restrict to trusted office/VPN ranges."
+  description = "List of authorized IP ranges for the AKS API server. Restrict to trusted office/VPN ranges."
   default     = []
+}
+
+variable "aks_oidc_issuer_enabled" {
+  type        = bool
+  description = "Enable OIDC issuer for workload identity."
+}
+
+variable "aks_workload_identity_enabled" {
+  type        = bool
+  description = "Enable Azure AD Workload Identity for pod authentication."
 }
 
 variable "log_analytics_retention_in_days" {
@@ -151,31 +211,6 @@ variable "log_analytics_retention_in_days" {
     condition     = var.log_analytics_retention_in_days >= 30
     error_message = "Log Analytics retention for dev must be at least 30 days to remain operationally useful."
   }
-}
-
-variable "aks_system_node_vm_size" {
-  type        = string
-  description = "VM size for the dev AKS system node pool (capacity decision)."
-}
-
-variable "aks_system_node_max_pods" {
-  type        = number
-  description = "Maximum pods per node for the dev AKS system node pool (capacity decision)."
-
-  validation {
-    condition     = var.aks_system_node_max_pods >= 30
-    error_message = "The maximum pods per node should be at least 30 for AKS system nodes."
-  }
-}
-
-variable "aks_node_pool_max_surge" {
-  type        = string
-  description = "Max surge during dev AKS node pool upgrades (for example, 33% or 1)."
-}
-
-variable "aks_private_cluster_enabled" {
-  type        = bool
-  description = "Whether the future dev AKS cluster uses a private API endpoint (exposure strategy)."
 }
 
 #########################################################

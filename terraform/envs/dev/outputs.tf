@@ -38,3 +38,24 @@ output "aks_subnet_id" {
   description = "ID of the private (AKS) subnet for the dev environment."
   value       = module.network.aks_subnet_id
 }
+
+output "aks_cluster_name" {
+  description = "Name of the AKS cluster for the dev environment."
+  value       = module.aks.cluster_name
+}
+
+output "aks_kube_config" {
+  description = "Kubernetes configuration for kubectl access to the dev AKS cluster. Treat as sensitive."
+  value       = module.aks.kube_config
+  sensitive   = true
+}
+
+output "aks_oidc_issuer_url" {
+  description = "OIDC issuer URL for workload identity integration."
+  value       = module.aks.oidc_issuer_url
+}
+
+output "aks_managed_identity_principal_id" {
+  description = "Principal ID of the AKS cluster's managed identity for RBAC assignments."
+  value       = module.aks.managed_identity_principal_id
+}

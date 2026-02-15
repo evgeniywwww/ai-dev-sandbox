@@ -151,25 +151,41 @@ security_rules_private = [
 # AKS Capacity
 #############################
 
-aks_kubernetes_version = "1.29.0"
+# Cluster Identity
+aks_cluster_name       = "leads-market-aks-dev"
+aks_dns_prefix         = "leads-market-dev"
+aks_kubernetes_version = "1.29"
 
-aks_admin_group_object_ids = [
-  "00000000-0000-0000-0000-000000000001",
-]
+# Cost-Optimized SKU for Dev
+aks_sku_tier = "Free"
 
+# Public Cluster (Cost-Efficient Dev Setup)
+aks_private_cluster_enabled = false
+
+# API Access Restrictions
 aks_api_server_authorized_ip_ranges = [
   "1.2.3.4/32",
 ]
 
-aks_system_node_vm_size   = "Standard_D4ds_v5"
+# Node Pool Configuration (Budget-Friendly)
+aks_system_node_vm_size   = "Standard_B2s"
 aks_system_node_max_pods  = 110
 aks_node_pool_max_surge   = "33%"
-aks_private_cluster_enabled = true
 
+# Autoscaling
 enable_auto_scaling  = true
 min_node_count       = 1
-max_node_count       = 5
-initial_node_count   = 2
+max_node_count       = 2
+initial_node_count   = 1
+
+# Networking
+aks_network_plugin = "azure"
+aks_network_policy = "azure"
+aks_outbound_type  = "loadBalancer"
+
+# Modern Identity (Workload Identity)
+aks_oidc_issuer_enabled       = true
+aks_workload_identity_enabled = true
 
 #############################
 # Logging
