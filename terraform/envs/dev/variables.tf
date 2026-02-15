@@ -1,3 +1,35 @@
+#########################################################
+# Environment: dev - Input Variables (Contract)
+#########################################################
+#
+# PURPOSE:
+#   Defines the contract for all dev environment inputs.
+#   All values are supplied via dev.auto.tfvars.
+#
+# LAYER RESPONSIBILITY:
+#   - Type definitions
+#   - Self-contained validation
+#   - Documentation
+#
+# MUST NOT CONTAIN:
+#   - Default values (policy decisions belong in tfvars)
+#   - Environment-specific logic
+#   - Hardcoded values
+#
+# STANDARDS ALIGNMENT:
+#   Section 2.1: variables.tf = Contract Only
+#   Section 2.2: tfvars = Single Source of Truth
+#
+# NOTES:
+#   - Security rules are defined in tfvars and passed to security module
+#   - Cross-variable validation uses check blocks (checks.tf)
+#
+#########################################################
+
+#########################################################
+# Environment Identity
+#########################################################
+
 variable "location" {
   type        = string
   description = "Azure region for the dev environment (for example, westeurope or eastus)."
@@ -23,6 +55,10 @@ variable "common_tags" {
   description = "Tags applied to all resources in the dev environment. Must include owner and any environment-specific tags."
 }
 
+#########################################################
+# Networking
+#########################################################
+
 variable "vnet_address_space" {
   type        = list(string)
   description = "Address space for the virtual network in CIDR notation."
@@ -47,6 +83,10 @@ variable "aks_subnet_cidr" {
     error_message = "The AKS subnet CIDR must be a valid IPv4 CIDR prefix."
   }
 }
+
+#########################################################
+# Security Policy (NSG Rules)
+#########################################################
 
 variable "security_rules_public" {
   type = list(object({
@@ -77,6 +117,10 @@ variable "security_rules_private" {
   }))
   description = "Security rules applied to the private (AKS) subnet NSG. Defined in tfvars per environment."
 }
+
+#########################################################
+# AKS Configuration (future)
+#########################################################
 
 variable "aks_kubernetes_version" {
   type        = string
@@ -128,6 +172,10 @@ variable "aks_private_cluster_enabled" {
   type        = bool
   description = "Whether the future dev AKS cluster uses a private API endpoint (exposure strategy)."
 }
+
+#########################################################
+# Autoscaling
+#########################################################
 
 variable "enable_auto_scaling" {
   type        = bool

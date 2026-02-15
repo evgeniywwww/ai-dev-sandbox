@@ -1,3 +1,35 @@
+#########################################################
+# Environment: dev - Policy Values (Single Source of Truth)
+#########################################################
+#
+# PURPOSE:
+#   Defines all environment-specific policy values for the dev environment.
+#   This is the ONLY place where dev policy is defined.
+#
+# LAYER RESPONSIBILITY:
+#   - Environment identity (project, location, etc.)
+#   - Network topology policy (CIDRs)
+#   - Security policy (NSG rules)
+#   - Capacity decisions (VM sizes, scaling, retention)
+#   - Tagging policy
+#
+# MUST NOT CONTAIN:
+#   - Hardcoded credentials or secrets
+#   - Logic or conditionals
+#   - References to other environments
+#
+# STANDARDS ALIGNMENT:
+#   Section 2.2: tfvars = Single Source of Truth
+#   Section 12:  Security Module Architecture (rules defined here)
+#   Section 13:  Azure Naming Governance (raw project_name sanitized in locals)
+#
+# NOTES:
+#   - project_name may contain spaces/special chars; sanitized in locals.tf
+#   - All values here are passed to modules via root main.tf
+#   - Security rules are applied via security module
+#
+#########################################################
+
 #############################
 # Project & Environment
 #############################

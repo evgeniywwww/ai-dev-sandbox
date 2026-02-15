@@ -1,3 +1,37 @@
+#########################################################
+# Environment: dev - Root Orchestration
+#########################################################
+#
+# PURPOSE:
+#   Orchestrates module instantiation for the dev environment.
+#   Wires together network topology and security policy modules.
+#
+# LAYER RESPONSIBILITY:
+#   - Module instantiation
+#   - Module wiring and dependency management
+#   - Passing policy values from tfvars to modules
+#
+# MUST NOT CONTAIN:
+#   - Resource definitions (belong in modules)
+#   - Policy logic (belongs in tfvars)
+#   - Environment branching
+#   - Hardcoded values
+#
+# STANDARDS ALIGNMENT:
+#   Section 12: Security Module Architecture (separation)
+#   Section 13: Azure Naming Governance (sanitized names from locals)
+#   Section 15: Module Philosophy (root controls orchestration)
+#
+# MODULE DEPENDENCIES:
+#   security_public  → depends on network.public_nsg_id
+#   security_private → depends on network.private_nsg_id
+#
+#########################################################
+
+#########################################################
+# Network Topology
+#########################################################
+
 module "network" {
   source = "../../modules/network"
 
@@ -11,6 +45,10 @@ module "network" {
   resource_group_name = var.resource_group_name
   tags                = local.common_tags
 }
+
+#########################################################
+# Security Policy Application
+#########################################################
 
 module "security_public" {
   source = "../../modules/security"

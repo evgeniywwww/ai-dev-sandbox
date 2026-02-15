@@ -1,3 +1,39 @@
+#########################################################
+# Network Module - Topology Layer
+#########################################################
+#
+# PURPOSE:
+#   Defines Azure network topology including VNet, subnets,
+#   NAT Gateway, NSG resources, and route tables.
+#
+# LAYER RESPONSIBILITY:
+#   - Network topology (VNet, subnets, NAT, route tables)
+#   - NSG resource creation (but NOT security rules)
+#   - Infrastructure attachments (subnet associations)
+#
+# MUST NOT CONTAIN:
+#   - Security policy (rules, firewall config)
+#   - Environment-specific logic
+#   - Hardcoded CIDR ranges
+#   - Naming logic (names are passed from root)
+#
+# STANDARDS ALIGNMENT:
+#   Section 7:  Network Architecture (Azure)
+#   Section 8:  AKS Network Model (delegation)
+#   Section 9:  NAT Design
+#   Section 12: Security Module Architecture (NSG creation only)
+#   Section 15: Module Philosophy (deterministic, explicit inputs)
+#
+# RELATION TO OTHER MODULES:
+#   - Security module applies rules to NSGs created here
+#   - Root module passes sanitized names and CIDRs
+#
+#########################################################
+
+#########################################################
+# VNet and Subnets
+#########################################################
+
 resource "azurerm_virtual_network" "this" {
   name                = var.vnet_name
   address_space       = var.address_space
@@ -32,6 +68,10 @@ resource "azurerm_subnet" "aks" {
   }
 }
 
+#########################################################
+# NAT Gateway (for private subnet outbound)
+#########################################################
+
 resource "azurerm_public_ip" "nat" {
   name                = "${var.vnet_name}-nat-pip"
   location            = var.location
@@ -59,6 +99,10 @@ resource "azurerm_subnet_nat_gateway_association" "aks" {
   nat_gateway_id = azurerm_nat_gateway.this.id
 }
 
+#########################################################
+# Network Security Groups (empty - rules applied via security module)
+#########################################################
+
 resource "azurerm_network_security_group" "public" {
   name                = "${var.vnet_name}-public-nsg"
   location            = var.location
@@ -82,6 +126,10 @@ resource "azurerm_subnet_network_security_group_association" "aks" {
   subnet_id                 = azurerm_subnet.aks.id
   network_security_group_id = azurerm_network_security_group.private.id
 }
+
+#########################################################
+# Route Tables
+#########################################################
 
 resource "azurerm_route_table" "public" {
   name                          = "${var.vnet_name}-public-rt"

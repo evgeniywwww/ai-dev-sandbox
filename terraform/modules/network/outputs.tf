@@ -1,3 +1,25 @@
+#########################################################
+# Network Module - Outputs
+#########################################################
+#
+# PURPOSE:
+#   Exposes minimal required attributes for root module
+#   orchestration and security module integration.
+#
+# LAYER RESPONSIBILITY:
+#   - Export VNet/subnet IDs for wiring
+#   - Export NSG IDs for security module
+#
+# MUST NOT CONTAIN:
+#   - Raw resource objects (expose specific attributes only)
+#   - Internal implementation details
+#
+# STANDARDS ALIGNMENT:
+#   Section 12: Security Module Architecture (NSG IDs for security module)
+#   Section 15: Module Philosophy (minimal exposure)
+#
+#########################################################
+
 output "vnet_id" {
   description = "ID of the virtual network."
   value       = azurerm_virtual_network.this.id

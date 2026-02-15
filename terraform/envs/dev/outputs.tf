@@ -1,3 +1,24 @@
+#########################################################
+# Environment: dev - Outputs
+#########################################################
+#
+# PURPOSE:
+#   Exposes key infrastructure identifiers for external reference
+#   and integration (CI/CD, other Terraform workspaces, etc.).
+#
+# LAYER RESPONSIBILITY:
+#   - Export network resource IDs
+#   - Minimal exposure (only what's needed externally)
+#
+# MUST NOT CONTAIN:
+#   - Sensitive data without `sensitive = true`
+#   - Raw resource objects (expose specific attributes only)
+#
+# STANDARDS ALIGNMENT:
+#   Section 15: Module Philosophy (minimal exposure)
+#
+#########################################################
+
 output "vnet_id" {
   description = "ID of the virtual network for the dev environment."
   value       = module.network.vnet_id

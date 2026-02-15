@@ -1,3 +1,27 @@
+#########################################################
+# Network Module - Input Variables
+#########################################################
+#
+# PURPOSE:
+#   Defines the contract for the network topology module.
+#   All inputs are required and must be passed from root.
+#
+# LAYER RESPONSIBILITY:
+#   - Type definitions
+#   - Input validation (where applicable)
+#   - Documentation
+#
+# MUST NOT CONTAIN:
+#   - Default values (policy decisions)
+#   - Environment-specific logic
+#   - Hardcoded values
+#
+# STANDARDS ALIGNMENT:
+#   Section 2.1: variables.tf = Contract Only
+#   Section 15:  Module Philosophy (explicit inputs)
+#
+#########################################################
+
 variable "vnet_name" {
   type        = string
   description = "Name of the virtual network. All other resource names are derived from this."
