@@ -520,3 +520,151 @@ The Terraform layer must evolve toward:
 * Policy-as-code integration
 * Scalable environment replication
 * Predictable cloud topology
+
+---
+
+# 23. AKS Architecture Standards
+
+Azure Kubernetes Service represents a critical platform component. These standards ensure AKS deployments remain deterministic, secure, and governance-aligned.
+
+## 23.1 AKS Access Model
+
+API server exposure must be explicitly controlled.
+
+Dev environments:
+
+* May use public API server with IP restriction
+* IP ranges must be defined in tfvars
+* No unrestricted public access
+
+Production environments:
+
+* Must use private API server
+* API endpoint must be VNet-internal only
+* Access via private endpoint or VPN/bastion
+
+### Enforced Rule
+
+* MUST explicitly set `private_cluster_enabled` per environment
+* MUST define `api_server_authorized_ip_ranges` when using public endpoint
+* MUST NOT allow implicit public exposure
+
+---
+
+## 23.2 AKS Identity Model
+
+Modern workload identity is mandatory.
+
+Required configuration:
+
+* OIDC issuer must be enabled
+* Workload Identity must be used for pod-to-Azure authentication
+* System-assigned or user-assigned managed identity must be explicit
+
+Deprecated patterns:
+
+* aad-pod-identity (replaced by Workload Identity)
+* Service principal authentication (legacy)
+
+### Enforced Rule
+
+* MUST enable `oidc_issuer_enabled`
+* MUST enable `workload_identity_enabled`
+* MUST NOT use deprecated identity methods
+* Identity configuration MUST be explicit in root (no module defaults)
+
+---
+
+## 23.3 AKS Networking Model
+
+Azure CNI is the enterprise-grade networking mode.
+
+Required configuration:
+
+* AKS must use a dedicated subnet
+* Subnet must be delegated to `Microsoft.ContainerService/managedClusters`
+* IP address planning must be explicit in tfvars
+* Network plugin must be defined (`azure` or `kubenet`)
+* Network policy must be defined (`azure`, `calico`, or `cilium`)
+* Outbound strategy must be explicit (`loadBalancer`, `userDefinedRouting`, or `managedNATGateway`)
+
+### Enforced Rule
+
+* MUST use Azure CNI for production
+* MUST delegate AKS subnet per Section 8
+* MUST define `network_plugin`, `network_policy`, and `outbound_type` in root
+* MUST NOT rely on provider defaults for networking
+
+---
+
+## 23.4 Node Pool Governance
+
+Node pool configuration is environment-driven.
+
+Required parameters:
+
+* VM size must be defined in tfvars (no module defaults)
+* Autoscaling bounds must be validated (Section 14)
+* Initial, min, and max node counts must satisfy: `min <= initial <= max`
+* Upgrade strategy (max surge) must be configurable
+
+### Enforced Rule
+
+* MUST expose all node pool parameters as variables
+* MUST validate autoscaling bounds via `check` blocks
+* MUST NOT hardcode VM sizes or node counts in modules
+* Capacity decisions belong in root tfvars
+
+---
+
+## 23.5 Cost Governance
+
+Environment tier determines resource sizing.
+
+Dev:
+
+* Cost-optimized VM sizes (e.g., B-series, D2s)
+* SKU tier: Free or Standard
+* Minimal node counts
+* Autoscaling with low upper bounds
+
+Production:
+
+* Performance-optimized VM sizes
+* SKU tier: Standard or Premium
+* High-availability node counts
+* Autoscaling with production capacity
+
+### Enforced Rule
+
+* MUST define `sku_tier` explicitly per environment
+* MUST NOT apply production defaults to dev environments
+* Cost optimization is an environment decision, not a module decision
+
+---
+
+## 23.6 Module Design Rule for AKS
+
+AKS module is an implementation layer.
+
+The module must:
+
+* Accept all configuration as explicit inputs
+* Expose identity attributes (principal ID, OIDC issuer)
+* Not embed environment policy
+* Be reusable across dev/stage/prod
+
+The module must not:
+
+* Hardcode SKU tier, VM sizes, or node counts
+* Branch by environment
+* Assume networking defaults
+* Hide identity or security configuration
+
+### Enforced Rule
+
+* Root controls: networking, capacity, identity, and exposure
+* Module implements: cluster creation and infrastructure wiring
+* Outputs must include: `kube_config`, `cluster_name`, `oidc_issuer_url`, `managed_identity_principal_id`
+
+---
