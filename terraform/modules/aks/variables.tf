@@ -72,6 +72,16 @@ variable "vnet_subnet_id" {
   description = "ID of the subnet where AKS nodes will be deployed."
 }
 
+variable "system_node_pool_name" {
+  type        = string
+  description = "Name of the system node pool. Must be lowercase alphanumeric (max 12 chars)."
+
+  validation {
+    condition     = can(regex("^[a-z0-9]{1,12}$", var.system_node_pool_name))
+    error_message = "system_node_pool_name must be 1-12 lowercase alphanumeric characters."
+  }
+}
+
 variable "enable_auto_scaling" {
   type        = bool
   description = "Enable autoscaling for the system node pool."

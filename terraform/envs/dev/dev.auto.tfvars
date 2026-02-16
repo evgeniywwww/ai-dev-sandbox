@@ -152,9 +152,10 @@ security_rules_private = [
 #############################
 
 # Cluster Identity
-aks_cluster_name       = "leads-market-aks-dev"
-aks_dns_prefix         = "leads-market-dev"
-aks_kubernetes_version = "1.29"
+aks_cluster_name            = "leads-market-aks-dev"
+aks_dns_prefix              = "leads-market-dev"
+aks_system_node_pool_name   = "system"
+aks_kubernetes_version      = "1.29"
 
 # Cost-Optimized SKU for Dev
 aks_sku_tier = "Free"

@@ -137,6 +137,11 @@ variable "aks_dns_prefix" {
   description = "DNS prefix for the AKS API server endpoint."
 }
 
+variable "aks_system_node_pool_name" {
+  type        = string
+  description = "Name of the AKS system node pool. Must be lowercase alphanumeric (max 12 chars)."
+}
+
 variable "aks_kubernetes_version" {
   type        = string
   description = "Kubernetes version to use for the AKS cluster."

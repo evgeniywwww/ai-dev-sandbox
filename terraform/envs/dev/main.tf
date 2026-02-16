@@ -86,9 +86,10 @@ module "aks" {
 
   vnet_subnet_id = module.network.aks_subnet_id
 
-  system_node_vm_size  = var.aks_system_node_vm_size
-  system_node_max_pods = var.aks_system_node_max_pods
-  node_pool_max_surge  = var.aks_node_pool_max_surge
+  system_node_pool_name = var.aks_system_node_pool_name
+  system_node_vm_size   = var.aks_system_node_vm_size
+  system_node_max_pods  = var.aks_system_node_max_pods
+  node_pool_max_surge   = var.aks_node_pool_max_surge
 
   enable_auto_scaling  = var.enable_auto_scaling
   initial_node_count   = var.initial_node_count

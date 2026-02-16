@@ -41,11 +41,11 @@ resource "azurerm_kubernetes_cluster" "this" {
   private_cluster_enabled = var.private_cluster_enabled
 
   default_node_pool {
-    name                = "system"
-    vm_size             = var.system_node_vm_size
-    vnet_subnet_id      = var.vnet_subnet_id
+    name                 = var.system_node_pool_name
+    vm_size              = var.system_node_vm_size
+    vnet_subnet_id       = var.vnet_subnet_id
     orchestrator_version = var.kubernetes_version
-    type                = "VirtualMachineScaleSets"
+    type                 = "VirtualMachineScaleSets"
     
     enable_auto_scaling = var.enable_auto_scaling
     node_count          = var.initial_node_count
