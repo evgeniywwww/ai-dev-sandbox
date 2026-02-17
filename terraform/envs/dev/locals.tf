@@ -45,7 +45,6 @@ locals {
     {
       project     = var.project_name
       environment = var.environment
-      cluster     = var.aks_cluster_name
     },
     var.common_tags,
   )

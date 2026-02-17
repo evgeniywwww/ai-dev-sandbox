@@ -668,3 +668,53 @@ The module must not:
 * Outputs must include: `kube_config`, `cluster_name`, `oidc_issuer_url`, `managed_identity_principal_id`
 
 ---
+
+# 24. Provider Compatibility Rule
+
+Terraform providers evolve continuously. Schema changes, deprecated arguments, and new features must be accounted for during code generation and maintenance.
+
+## 24.1 Provider Version Awareness
+
+AI-assisted or human-generated Terraform code must:
+
+* Verify the active provider version before using resource arguments
+* Align implementation with the provider schema for that version
+* Not assume argument compatibility across major versions
+
+Example:
+
+* `azurerm` v3.x uses `enable_auto_scaling` in node pools
+* `azurerm` v4.x removes `enable_auto_scaling` and infers autoscaling from `min_count`/`max_count`
+
+## 24.2 Schema Validation Strategy
+
+When writing or refactoring Terraform:
+
+* Check the provider documentation for the pinned version
+* Verify argument names and types match the schema
+* Do not rely on deprecated or removed arguments
+* Do not carry over patterns from older provider versions without validation
+
+### Enforced Rule
+
+* MUST validate resource arguments against the active provider version
+* MUST NOT use deprecated or removed arguments
+* MUST check official provider documentation when major version changes
+* Provider version is pinned in `providers.tf`; implementation must match
+
+## 24.3 Backward Compatibility Discipline
+
+When upgrading provider versions:
+
+* Review breaking changes in provider release notes
+* Update modules to align with new schema
+* Do not assume forward compatibility
+* Test plan output before apply
+
+### Enforced Rule
+
+* Provider upgrades require explicit schema validation
+* Modules must be updated when provider arguments change
+* AI-generated code must adapt to the declared provider version
+
+---

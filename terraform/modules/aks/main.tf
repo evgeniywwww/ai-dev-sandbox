@@ -47,11 +47,12 @@ resource "azurerm_kubernetes_cluster" "this" {
     orchestrator_version = var.kubernetes_version
     type                 = "VirtualMachineScaleSets"
     
-    enable_auto_scaling = var.enable_auto_scaling
-    node_count          = var.initial_node_count
-    min_count           = var.enable_auto_scaling ? var.min_node_count : null
-    max_count           = var.enable_auto_scaling ? var.max_node_count : null
-    max_pods            = var.system_node_max_pods
+    # In azurerm v4.x, autoscaling is controlled by min_count and max_count only.
+    # If both are set, autoscaling is enabled. If only node_count is set, autoscaling is disabled.
+    node_count = var.enable_auto_scaling ? null : var.initial_node_count
+    min_count  = var.enable_auto_scaling ? var.min_node_count : null
+    max_count  = var.enable_auto_scaling ? var.max_node_count : null
+    max_pods   = var.system_node_max_pods
 
     upgrade_settings {
       max_surge = var.node_pool_max_surge
