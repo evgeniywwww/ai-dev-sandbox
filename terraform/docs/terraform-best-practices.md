@@ -718,3 +718,129 @@ When upgrading provider versions:
 * AI-generated code must adapt to the declared provider version
 
 ---
+
+# 25. Key Vault Governance
+
+Azure Key Vault requires specific architectural discipline to ensure secure, auditable, and maintainable secret management.
+
+## 25.1 Authorization Model
+
+Key Vault must use RBAC authorization, not legacy access policies.
+
+### Enforced Rule
+
+* `enable_rbac_authorization = true` (always)
+* MUST NOT use `access_policy` blocks
+* Role assignments are created as separate `azurerm_role_assignment` resources
+* Assignments must follow least-privilege principle
+
+**Rationale**: RBAC provides centralized, auditable access control aligned with Azure AD governance.
+
+## 25.2 Naming Convention
+
+Key Vault names must be globally unique and comply with Azure restrictions:
+
+* 3-24 characters
+* Alphanumeric and hyphens only
+* No underscores, periods, or special characters
+
+### Implementation Pattern
+
+```hcl
+# In locals.tf
+key_vault_base_max = 17  # Reserve 7 chars for suffix
+key_vault_name = "${substr(local.sanitized_base_name, 0, local.key_vault_base_max)}-kv-${var.environment}"
+```
+
+**Good**: `lm-aks-platform-kv-dev` (24 chars)  
+**Bad**: `leads_market_eks_platform_keyvault_dev` (invalid chars, too long)
+
+## 25.3 Deletion Protection Strategy
+
+Key Vault deletion protection is environment-dependent.
+
+Dev:
+* `purge_protection_enabled = false` (allow immediate deletion)
+* `soft_delete_retention_days = 7` (minimum)
+
+Production:
+* `purge_protection_enabled = true` (prevent accidental permanent deletion)
+* `soft_delete_retention_days = 90` (maximum compliance)
+
+### Enforced Rule
+
+* MUST define `purge_protection_enabled` explicitly per environment
+* MUST define `soft_delete_retention_days` explicitly per environment
+* Module MUST NOT hardcode these values
+
+## 25.4 RBAC Role Assignment
+
+Workload identities require explicit secret access roles.
+
+Recommended built-in roles:
+* `Key Vault Secrets User` (read secrets)
+* `Key Vault Secrets Officer` (manage secrets)
+* `Key Vault Crypto User` (use keys for crypto operations)
+
+### Implementation Pattern
+
+```hcl
+resource "azurerm_role_assignment" "workload_identity_key_vault_secrets_user" {
+  scope                = module.key_vault.key_vault_id
+  role_definition_name = "Key Vault Secrets User"
+  principal_id         = module.workload_identity.principal_id
+}
+```
+
+### Enforced Rule
+
+* RBAC assignments MUST be created in root orchestration layer
+* Scope MUST be the Key Vault ID (least privilege)
+* Principal MUST be explicitly passed from workload identity module output
+* MUST NOT use broad roles like "Contributor" or "Owner"
+
+## 25.5 Network Restrictions
+
+Network access is environment-dependent.
+
+Dev:
+* No network restrictions (default: all networks)
+* Simplifies local development and testing
+
+Production:
+* Private endpoint required
+* Firewall rules for authorized networks only
+* Public network access disabled
+
+### Enforced Rule
+
+* Network configuration MUST be explicit per environment
+* Dev may allow public access for simplicity
+* Production MUST enforce private endpoint + firewall
+
+## 25.6 Module Design Rule for Key Vault
+
+Key Vault module is an implementation layer.
+
+Module responsibilities:
+* Create `azurerm_key_vault` resource
+* Accept SKU, retention, purge protection from root
+* Do NOT create secrets
+* Do NOT create RBAC assignments
+* Do NOT implement network rules
+
+Root responsibilities:
+* Define SKU (standard vs premium)
+* Define deletion protection policy
+* Create RBAC assignments
+* Optionally configure network rules
+
+### Enforced Rule
+
+* Key Vault module MUST NOT contain hardcoded SKUs or retention periods
+* Module MUST expose `key_vault_id` for RBAC assignments
+* Root MUST define all policy values in tfvars
+* RBAC assignments belong in root orchestration, not in module
+
+---
+

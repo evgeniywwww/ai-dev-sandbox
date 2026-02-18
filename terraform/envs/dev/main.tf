@@ -109,6 +109,24 @@ module "aks" {
 }
 
 #########################################################
+# Key Vault
+#########################################################
+
+module "key_vault" {
+  source = "../../modules/key_vault"
+
+  name                       = local.key_vault_name
+  location                   = var.location
+  resource_group_name        = var.resource_group_name
+  tenant_id                  = var.tenant_id
+  sku_name                   = var.key_vault_sku_name
+  enable_rbac_authorization  = true
+  purge_protection_enabled   = var.key_vault_purge_protection_enabled
+  soft_delete_retention_days = var.key_vault_soft_delete_retention_days
+  tags                       = local.common_tags
+}
+
+#########################################################
 # Workload Identity (Product-Level)
 #########################################################
 
@@ -122,4 +140,14 @@ module "workload_identity" {
   namespace            = var.environment
   service_account_name = var.workload_identity_service_account_name
   tags                 = local.common_tags
+}
+
+#########################################################
+# RBAC: Workload Identity → Key Vault
+#########################################################
+
+resource "azurerm_role_assignment" "workload_identity_key_vault_secrets_user" {
+  scope                = module.key_vault.key_vault_id
+  role_definition_name = "Key Vault Secrets User"
+  principal_id         = module.workload_identity.principal_id
 }

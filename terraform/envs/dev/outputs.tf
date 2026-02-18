@@ -64,3 +64,13 @@ output "workload_identity_client_id" {
   description = "Client ID of the product workload identity. Use in Kubernetes ServiceAccount annotation: azure.workload.identity/client-id."
   value       = module.workload_identity.client_id
 }
+
+output "key_vault_uri" {
+  description = "URI of the Key Vault for application configuration."
+  value       = module.key_vault.key_vault_uri
+}
+
+output "key_vault_name" {
+  description = "Name of the Key Vault."
+  value       = module.key_vault.key_vault_name
+}

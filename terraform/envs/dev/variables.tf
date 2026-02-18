@@ -209,6 +209,40 @@ variable "aks_workload_identity_enabled" {
 }
 
 #########################################################
+# Key Vault
+#########################################################
+
+variable "key_vault_sku_name" {
+  type        = string
+  description = "SKU name for Key Vault (standard or premium)."
+
+  validation {
+    condition     = contains(["standard", "premium"], var.key_vault_sku_name)
+    error_message = "Key Vault SKU must be either 'standard' or 'premium'."
+  }
+}
+
+variable "key_vault_purge_protection_enabled" {
+  type        = bool
+  description = "Enable purge protection for Key Vault."
+}
+
+variable "key_vault_soft_delete_retention_days" {
+  type        = number
+  description = "Soft delete retention period in days (7-90)."
+
+  validation {
+    condition     = var.key_vault_soft_delete_retention_days >= 7 && var.key_vault_soft_delete_retention_days <= 90
+    error_message = "Key Vault soft delete retention must be between 7 and 90 days."
+  }
+}
+
+variable "tenant_id" {
+  type        = string
+  description = "Azure AD tenant ID for Key Vault configuration."
+}
+
+#########################################################
 # Workload Identity
 #########################################################
 

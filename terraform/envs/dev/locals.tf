@@ -83,4 +83,10 @@ locals {
 
   # Workload identity naming
   workload_identity_name = "${local.sanitized_base_name}-identity-${var.environment}"
+
+  # Key Vault naming: max 24 chars, alphanumeric and hyphens only
+  # Pattern: {base}-kv-{env}
+  # Reserve 7 chars for suffix (-kv-dev, -kv-prod)
+  key_vault_base_max = 17
+  key_vault_name = "${substr(local.sanitized_base_name, 0, local.key_vault_base_max)}-kv-${var.environment}"
 }

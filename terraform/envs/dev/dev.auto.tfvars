@@ -38,6 +38,7 @@ project_name = "lm-aks-platform"
 environment  = "dev"
 location     = "westeurope"
 resource_group_name = "rg-dev-aks"
+tenant_id = "e7310dde-000f-4b62-b8ab-a9e604bc6ddb"
 
 #############################
 # Networking
@@ -193,6 +194,14 @@ aks_workload_identity_enabled = true
 #############################
 
 workload_identity_service_account_name = "leads-market-sa"
+
+#############################
+# Key Vault
+#############################
+
+key_vault_sku_name                   = "standard"
+key_vault_purge_protection_enabled   = false
+key_vault_soft_delete_retention_days = 7
 
 #############################
 # Logging
