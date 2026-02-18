@@ -34,7 +34,7 @@
 # Project & Environment
 #############################
 
-project_name = "Leads Market EKS Platform"
+project_name = "lm-aks-platform"
 environment  = "dev"
 location     = "westeurope"
 resource_group_name = "rg-dev-aks"
@@ -187,6 +187,12 @@ aks_outbound_type  = "loadBalancer"
 # Modern Identity (Workload Identity)
 aks_oidc_issuer_enabled       = true
 aks_workload_identity_enabled = true
+
+#############################
+# Workload Identity
+#############################
+
+workload_identity_service_account_name = "leads-market-sa"
 
 #############################
 # Logging

@@ -107,3 +107,19 @@ module "aks" {
 
   tags = local.common_tags
 }
+
+#########################################################
+# Workload Identity (Product-Level)
+#########################################################
+
+module "workload_identity" {
+  source = "../../modules/workload_identity"
+
+  identity_name        = local.workload_identity_name
+  location             = var.location
+  resource_group_name  = var.resource_group_name
+  oidc_issuer_url      = module.aks.oidc_issuer_url
+  namespace            = var.environment
+  service_account_name = var.workload_identity_service_account_name
+  tags                 = local.common_tags
+}

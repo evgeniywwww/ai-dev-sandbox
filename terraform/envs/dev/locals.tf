@@ -80,4 +80,7 @@ locals {
     public_subnet_name = "${local.sanitized_base_name}-public-subnet-${var.environment}"
     aks_subnet_name    = "${local.sanitized_base_name}-aks-subnet-${var.environment}"
   }
+
+  # Workload identity naming
+  workload_identity_name = "${local.sanitized_base_name}-identity-${var.environment}"
 }

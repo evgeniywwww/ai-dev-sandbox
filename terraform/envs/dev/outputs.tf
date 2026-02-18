@@ -59,3 +59,8 @@ output "aks_managed_identity_principal_id" {
   description = "Principal ID of the AKS cluster's managed identity for RBAC assignments."
   value       = module.aks.managed_identity_principal_id
 }
+
+output "workload_identity_client_id" {
+  description = "Client ID of the product workload identity. Use in Kubernetes ServiceAccount annotation: azure.workload.identity/client-id."
+  value       = module.workload_identity.client_id
+}

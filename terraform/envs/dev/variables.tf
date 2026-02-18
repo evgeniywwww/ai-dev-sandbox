@@ -208,6 +208,15 @@ variable "aks_workload_identity_enabled" {
   description = "Enable Azure AD Workload Identity for pod authentication."
 }
 
+#########################################################
+# Workload Identity
+#########################################################
+
+variable "workload_identity_service_account_name" {
+  type        = string
+  description = "Kubernetes service account name that will use the workload identity."
+}
+
 variable "log_analytics_retention_in_days" {
   type        = number
   description = "Retention period in days for future Log Analytics used by this environment."
